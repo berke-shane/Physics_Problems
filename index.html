@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balistik Laboratuvarı</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1a1a24;
+            padding: 20px;
+            border-radius: 12px;
+            width: 800px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .header h2 { margin: 0; font-size: 20px; }
+        .stats {
+            background: #252530;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #3a3a4a;
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .stats span { color: #fff; font-weight: bold; font-size: 16px; display: block; margin-top: 5px; }
+        canvas {
+            background-color: #252530;
+            border-radius: 8px;
+            border: 1px solid #3a3a4a;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .controls label { font-size: 14px; font-weight: bold; width: 120px;}
+        input[type="range"] { flex-grow: 1; cursor: pointer; }
+        .angle-display {
+            background: #121212;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            text-align: center;
+            min-width: 40px;
+        }
+        button {
+            background: #2c2c38;
+            color: white;
+            border: 1px solid #4a4a5a;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        button:hover { background: #3d3d4d; }
+        .fire-btn { flex-grow: 1; }
+        .clear-btn { width: 100%; background: #1a1a24; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Ballistics Lab</h2>
+        <div class="stats">
+            <div>Fırlatma Açısı<span id="statAngle">45°</span></div>
+            <div>Optimal Açı<span>45°</span></div>
+            <div>Menzil<span id="statRange">0.0 m</span></div>
+        </div>
+    </div>
+
+    <canvas id="simCanvas" width="800" height="400"></canvas>
+
+    <div class="controls">
+        <label>Launch Angle (°)</label>
+        <input type="range" id="angleSlider" min="0" max="90" value="45">
+        <div class="angle-display" id="angleValue">45</div>
+        <button class="fire-btn" id="fireBtn">FIRE</button>
+    </div>
+    <button class="clear-btn" id="clearBtn">Clear All</button>
+</div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const angleSlider = document.getElementById('angleSlider');
+    const angleValue = document.getElementById('angleValue');
+    const statAngle = document.getElementById('statAngle');
+    const statRange = document.getElementById('statRange');
+    
+    let trajectories = [];
+    let currentProjectile = null;
+    let animationId;
+
+    // Fizik Sabitleri
+    const V0 = 85; // İlk hız
+    const g = 9.81; // Yerçekimi
+    const startX = 50;
+    const startY = 350;
+
+    // Slider güncellendiğinde
+    angleSlider.addEventListener('input', (e) => {
+        angleValue.innerText = e.target.value;
+        statAngle.innerText = e.target.value + '°';
+        drawScene();
+    });
+
+    // Ateşleme butonu
+    document.getElementById('fireBtn').addEventListener('click', () => {
+        const angleDeg = parseInt(angleSlider.value);
+        const angleRad = angleDeg * (Math.PI / 180);
+        
+        currentProjectile = {
+            x: startX,
+            y: startY,
+            vx: V0 * Math.cos(angleRad),
+            vy: -V0 * Math.sin(angleRad), // Y ekseni canvas'ta ters olduğu için eksi
+            path: [{x: startX, y: startY}],
+            color: angleDeg === 45 ? '#4da6ff' : '#aaaaaa', // 45 derece mavi, diğerleri gri
+            time: 0
+        };
+        
+        if (!animationId) animate();
+    });
+
+    // Temizle Butonu
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        trajectories = [];
+        currentProjectile = null;
+        statRange.innerText = '0.0 m';
+        cancelAnimationFrame(animationId);
+        animationId = null;
+        drawScene();
+    });
+
+    function animate() {
+        if (!currentProjectile) return;
+
+        // Fiziği güncelle
+        currentProjectile.time += 0.05;
+        const t = currentProjectile.time;
+        
+        currentProjectile.x = startX + currentProjectile.vx * t;
+        currentProjectile.y = startY + (currentProjectile.vy * t + 0.5 * g * t * t);
+
+        currentProjectile.path.push({x: currentProjectile.x, y: currentProjectile.y});
+
+        // Yere çarptı mı?
+        if (currentProjectile.y >= startY) {
+            currentProjectile.y = startY;
+            trajectories.push(currentProjectile); // İzi kaydet
+            
+            // Menzili hesapla ve yaz
+            const range = Math.abs(currentProjectile.x - startX).toFixed(1);
+            statRange.innerText = range + ' m';
+            
+            currentProjectile = null;
+            animationId = null;
+            drawScene();
+            return;
+        }
+
+        drawScene();
+        animationId = requestAnimationFrame(animate);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Arka plan ızgarası
+        ctx.strokeStyle = '#3a3a4a';
+        ctx.setLineDash([5, 5]);
+        for(let i=0; i<800; i+=100) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 400); ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        // Zemin
+        ctx.fillStyle = '#404055';
+        ctx.fillRect(0, startY, canvas.width, canvas.height - startY);
+        ctx.strokeStyle = '#8bb4e5';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(0, startY); ctx.lineTo(canvas.width, startY); ctx.stroke();
+
+        // Eski izleri çiz
+        trajectories.forEach(proj => drawPath(proj.path, proj.color));
+
+        // Mevcut atışı çiz
+        if (currentProjectile) {
+            drawPath(currentProjectile.path, currentProjectile.color);
+            // Topun kendisi
+            ctx.fillStyle = '#ff9900';
+            ctx.beginPath();
+            ctx.arc(currentProjectile.x, currentProjectile.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Top namlusunu çiz
+        const angleDeg = parseInt(angleSlider.value);
+        const angleRad = angleDeg * (Math.PI / 180);
+        ctx.save();
+        ctx.translate(startX, startY);
+        ctx.rotate(-angleRad);
+        ctx.fillStyle = '#8bb4e5';
+        ctx.fillRect(-10, -5, 40, 10);
+        ctx.restore();
+    }
+
+    function drawPath(path, color) {
+        if (path.length < 2) return;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        for(let i=1; i<path.length; i++) {
+            ctx.lineTo(path[i].x, path[i].y);
+        }
+        ctx.stroke();
+    }
+
+    // Başlangıç çizimi
+    drawScene();
+</script>
+
+</body>
+</html>
