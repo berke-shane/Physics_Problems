@@ -53,3 +53,19 @@ $$s = \int_{0}^{t_0} \sqrt{a^2\omega^2 + b^2} \, dt = t_0 \sqrt{a^2\omega^2 + b^
 <img width="426" height="256" alt="image" src="https://github.com/user-attachments/assets/dd970ed9-d4cc-4591-9bbc-a9d16f1ebe00" />
 <img width="432" height="260" alt="image" src="https://github.com/user-attachments/assets/d7f1574f-9472-4ea6-8cee-0333a11975fc" />
 
+### d) Kinematic Interpretation of the Trajectory Graph
+
+**1. Combination of Two Independent Motions:**
+The particle's motion is split into horizontal and vertical components. While the particle continuously rotates in a closed trajectory horizontally (on the X and Y axes), it moves steadily upwards vertically (on the Z axis). The helical structure in the 3D graph is the direct result of these two simultaneous motions.
+
+**2. Bounded Motion in the Horizontal Plane:**
+The X and Y coordinates depend on cosine and sine functions. Since the values these functions can take are strictly limited (between +1 and -1), the particle can never move infinitely far away along the X and Y axes. It is confined to tracing an ellipse (or a perfect circle if $a=b$) bounded by radii $a$ and $b$. This horizontal motion is periodic, meaning it constantly returns to its starting coordinates on that plane.
+
+**3. Constant Velocity and Zero Acceleration on the Vertical Axis:**
+The Z coordinate ($z = bt$) depends linearly on time. This indicates that the particle neither accelerates nor decelerates as it climbs. The vertical velocity is constant ($v_z = b$). Because this velocity does not change, the particle has zero acceleration along the Z axis ($a_z = 0$).
+
+**4. Effect of Angular Velocity ($\omega$) on the Helix:**
+The constant $\omega$ represents the angular frequency of the horizontal rotation. If the value of $\omega$ increases, the particle rotates faster. Because its vertical climbing speed ($b$) remains constant, it will complete many more loops to reach the same height. Graphically, this means the coils of the helix will become much closer and tightly packed together.
+
+**5. Continuous Change of Direction and Acceleration:**
+Even though vertical acceleration is zero, the particle's total acceleration is not zero. Because it travels along a curved path horizontally, its direction of motion changes every instant. In physics, any change in direction requires an acceleration, even if the speed remains constant. Therefore, there is always an acceleration vector pointing toward the central axis of its horizontal rotation.
