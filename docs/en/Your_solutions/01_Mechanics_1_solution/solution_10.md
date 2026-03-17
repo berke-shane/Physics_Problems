@@ -49,3 +49,7 @@ $$s = \int_{0}^{t_0} \sqrt{a^2\omega^2\sin^2(\omega t) + b^2\omega^2\cos^2(\omeg
 **[TR]** $a=b$ özel durumu için yol uzunluğu:
 
 $$s = \int_{0}^{t_0} \sqrt{a^2\omega^2 + b^2} \, dt = t_0 \sqrt{a^2\omega^2 + b^2}$$
+
+<img width="426" height="256" alt="image" src="https://github.com/user-attachments/assets/dd970ed9-d4cc-4591-9bbc-a9d16f1ebe00" />
+<img width="432" height="260" alt="image" src="https://github.com/user-attachments/assets/d7f1574f-9472-4ea6-8cee-0333a11975fc" />
+
