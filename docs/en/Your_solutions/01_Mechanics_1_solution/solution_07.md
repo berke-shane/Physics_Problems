@@ -52,3 +52,6 @@ $$|\vec{a}(t)| = \sqrt{4^2 + (18t)^2} = \sqrt{16 + 324t^2}$$
 ### Step 4: Is the acceleration constant? / Adım 4: İvme sabit mi?
 **[EN]** Look at the acceleration vector: $\vec{a}(t) = 4\hat{i} + 18t\hat{j}$. The $\hat{j}$ component contains the variable $t$. This means the acceleration changes as time passes. Therefore, **the acceleration is NOT constant.**
 **[TR]** İvme vektörüne bakın: $\vec{a}(t) = 4\hat{i} + 18t\hat{j}$. $\hat{j}$ bileşeni $t$ değişkenini içerir. Bu, zaman geçtikçe ivmenin değiştiği anlamına gelir. Bu nedenle, **ivme sabit DEĞİLDİR.**
+
+<img width="474" height="405" alt="image" src="https://github.com/user-attachments/assets/05328476-a9f9-487f-9f7a-5e13ee423b52" />
+
